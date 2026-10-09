@@ -1,0 +1,191 @@
+@use '../../../styles/mixins' as *;
+
+/* 与仪表盘吞吐图同语汇：CSS 柱 + 网格线 + 玻璃提示，无图表库依赖 */
+
+.chart {
+  --chart-height: 200px;
+  --y-axis-width: 56px;
+
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.plot {
+  display: flex;
+  gap: $spacing-sm;
+  padding-top: 10px;
+}
+
+.yAxis {
+  position: relative;
+  width: var(--y-axis-width);
+  height: var(--chart-height);
+  flex: none;
+}
+
+.yTick {
+  position: absolute;
+  right: 0;
+  transform: translateY(-50%);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.canvas {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: var(--chart-height);
+}
+
+.gridlines {
+  position: absolute;
+  inset: 0;
+}
+
+.gridline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border-color);
+
+  &:last-child {
+    background: var(--border-primary);
+  }
+}
+
+.columns {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.column {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  cursor: default;
+}
+
+.bar {
+  display: block;
+  width: 100%;
+  max-width: 28px;
+  border-radius: $radius-sm $radius-sm 0 0;
+  background: var(--viz-success);
+  transform-origin: bottom center;
+  animation: usageBarGrow 0.42s cubic-bezier(0.4, 0, 0.2, 1) both;
+  transition: filter 120ms ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    transition: none;
+  }
+}
+
+.barCost {
+  background: var(--amber-color);
+}
+
+.columnActive .bar {
+  filter: brightness(1.1);
+}
+
+.idleTick {
+  display: block;
+  width: 100%;
+  max-width: 28px;
+  height: 2px;
+  border-radius: $radius-full;
+  background: var(--border-primary);
+}
+
+.tooltip {
+  position: absolute;
+  top: 4px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: $spacing-sm $spacing-md;
+  min-width: 168px;
+  border-radius: $radius-md;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-backdrop-filter);
+  -webkit-backdrop-filter: var(--glass-backdrop-filter);
+  box-shadow: var(--shadow-lg);
+  font-size: 12px;
+  color: var(--text-secondary);
+  pointer-events: none;
+  transition:
+    left 200ms var(--ease-out-strong, ease-out),
+    transform 200ms var(--ease-out-strong, ease-out);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.tooltipDate {
+  font-weight: 650;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.tooltipRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  b {
+    margin-left: auto;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.xAxis {
+  position: relative;
+  height: 16px;
+  margin-left: calc(var(--y-axis-width) + #{$spacing-sm});
+}
+
+.xTick {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.empty {
+  margin: 0;
+  padding: $spacing-lg 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+@keyframes usageBarGrow {
+  from {
+    transform: scaleY(0.02);
+    opacity: 0;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
