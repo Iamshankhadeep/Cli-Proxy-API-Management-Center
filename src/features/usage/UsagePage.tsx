@@ -20,6 +20,7 @@ import { useAuthStore } from '@/stores';
 import { formatCompactNumber, formatDateTimeValue, formatDateValue } from '@/utils/format';
 import { DailyUsageChart, type DailyChartMetric } from './components/DailyUsageChart';
 import { AccountsTable, ModelsTable } from './components/UsageTables';
+import { UsageTimeline } from './components/UsageTimeline';
 import { DASH } from './components/UsageCells';
 import { USAGE_RANGES, formatUsd, formatUsdExact, rangeToQuery, type UsageRange } from './logic';
 import styles from './UsagePage.module.scss';
@@ -41,6 +42,7 @@ export function UsagePage() {
   const [summary, setSummary] = useState<UsageSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [timelineRefreshKey, setTimelineRefreshKey] = useState(0);
   const requestRef = useRef(0);
 
   const load = useCallback(async () => {
@@ -67,7 +69,12 @@ export function UsagePage() {
     }
   }, [connectionStatus, range, t]);
 
-  useHeaderRefresh(load);
+  const refreshAll = useCallback(() => {
+    setTimelineRefreshKey((key) => key + 1);
+    return load();
+  }, [load]);
+
+  useHeaderRefresh(refreshAll);
 
   useEffect(() => {
     void load();
@@ -184,7 +191,7 @@ export function UsagePage() {
           <button
             type="button"
             className={styles.refreshButton}
-            onClick={() => void load()}
+            onClick={() => void refreshAll()}
             disabled={loading || connectionStatus !== 'connected'}
           >
             <IconRefreshCw size={14} className={loading ? styles.spinning : undefined} />
@@ -256,6 +263,8 @@ export function UsagePage() {
             </header>
             <DailyUsageChart daily={summary.daily} metric={chartMetric} />
           </section>
+
+          <UsageTimeline refreshKey={timelineRefreshKey} />
 
           <section className={styles.panel}>
             <header className={styles.panelHead}>

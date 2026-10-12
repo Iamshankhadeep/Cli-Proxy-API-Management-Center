@@ -1,0 +1,153 @@
+@use '../../../styles/mixins' as *;
+
+/*
+ * Categorical slots follow the validated reference order (blue, orange, aqua, yellow, magenta,
+ * green, violet, red); dark mode uses that palette's dark steps, not a flipped light set. Slot 8
+ * appears only when exactly eight models are present; otherwise the tail folds into a neutral
+ * "Other". Light slots 2-5 sit under 3:1 on the panel, so the legend carries names + totals and
+ * the tooltip carries exact values.
+ */
+.timeline {
+  --chart-surface: var(--bg-primary);
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #6250d6;
+  --series-8: #e34948;
+  --series-other: #a29c95;
+  --heat-low: #cde2fb;
+  --heat-high: #0d366b;
+  --heat-track: color-mix(in srgb, var(--text-primary) 4%, transparent);
+
+  :global([data-theme='dark']) & {
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-6: #008300;
+    --series-7: #9085e9;
+    --series-8: #e66767;
+    --series-other: #6f6962;
+    --heat-low: #1c3352;
+    --heat-high: #9ec5f4;
+    --heat-track: color-mix(in srgb, var(--text-primary) 5%, transparent);
+  }
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.loading {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm $spacing-xl;
+  margin: 0;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  dt {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 650;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 280px;
+  padding: 4px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-full;
+  background: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition:
+    opacity var(--dur-hover, 200ms) var(--ease-out-strong, ease-out),
+    border-color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out);
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 1px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--border-hover);
+    }
+  }
+}
+
+.legendHidden {
+  opacity: 0.45;
+
+  .swatch {
+    background: transparent !important;
+    box-shadow: inset 0 0 0 1.5px var(--text-tertiary);
+  }
+
+  .legendName {
+    text-decoration: line-through;
+  }
+}
+
+.swatch {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.legendName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legendValue {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
